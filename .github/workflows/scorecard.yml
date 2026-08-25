@@ -26,6 +26,7 @@ jobs:
       actions: read # Inspect workflow security posture.
       checks: read # Discover configured security checks.
       contents: read # Analyze repository history and configuration.
+      id-token: write # Publish authenticated Scorecard results for this public repository.
       issues: read # Inspect security-policy issue practices.
       pull-requests: read # Inspect contribution and review practices.
       security-events: write # Upload private Scorecard SARIF.
@@ -40,7 +41,7 @@ jobs:
         with:
           results_file: results.sarif
           results_format: sarif
-          publish_results: false
+          publish_results: true
 
       - name: Upload Scorecard artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

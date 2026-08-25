@@ -29,8 +29,9 @@ and the applicable GitHub Code Security entitlement.
 
 The Scorecard Action is pinned to an immutable source commit, but the current
 official release delegates execution to an upstream runtime image. This
-repository keeps `publish_results: false` and will adopt a digest-pinned
-official release when one is available.
+public repository publishes authenticated results through GitHub's OIDC token,
+as prescribed by the official Action. It will adopt a digest-pinned official
+runtime when one is available.
 
 ### Linear Release installer
 
