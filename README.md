@@ -1,5 +1,7 @@
 # Astrologo Android
 
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14228/badge)](https://www.bestpractices.dev/projects/14228)
+
 Public delivery repository for the Android edition of **Astrologo**, maintained
 by LCV Ideas & Software. The repository is currently an operational,
 governance, and supply-chain baseline; it does not contain a functional
