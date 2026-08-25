@@ -1,9 +1,10 @@
 # Third-party inventory
 
 This repository has no Android or production-runtime dependency at bootstrap.
-The following GitHub Actions are the complete automation dependency inventory.
-Every `uses:` reference is fixed to the listed full commit SHA and mirrored in
-`.github/workflows/actions.lock`.
+The following table inventories every **direct** GitHub Actions dependency.
+Every direct `uses:` reference is fixed to the listed full commit SHA. The
+machine-generated `.github/workflows/actions.lock` is the authoritative record
+for both direct and transitive automation dependencies.
 
 | Component | Version | Commit SHA | License | Purpose |
 | --- | --- | --- | --- | --- |
