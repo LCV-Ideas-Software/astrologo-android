@@ -14,7 +14,7 @@ Use GitHub's private vulnerability-reporting route:
 
 - https://github.com/LCV-Ideas-Software/astrologo-android/security/advisories/new
 
-If that route is unavailable, contact `lcv@lcv.dev` privately.
+If that route is unavailable, contact `security@lcv.dev` privately.
 
 Do not disclose a suspected vulnerability, credential, signing artifact,
 personal datum, payment issue, supply-chain weakness, deployment
