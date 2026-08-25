@@ -1,0 +1,14 @@
+Astrologo Android
+Copyright © 2026 LCV Ideas & Software
+
+The original content of this repository is licensed under the GNU Affero
+General Public License, version 3 or (at your option) any later version. The
+complete license is provided in LICENSE.
+
+This bootstrap contains documentation, configuration, a sanitized static
+site, and an inert Code Quality probe. It does not contain a functional
+Android application or production dependency. Third-party automation
+components and their licenses are listed independently in THIRDPARTY.md.
+
+Astrologo and LCV Ideas & Software names and marks are not licensed for
+endorsement or promotion by the AGPL grant.
