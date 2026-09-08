@@ -24,17 +24,14 @@ are not. Contributions must preserve that boundary.
 - No workflow bypasses rulesets or performs a direct merge.
 - Set workflow-level permissions to `{}` and grant each job only the token
   capabilities it demonstrably needs.
-- Pin external Actions to full commit SHAs and regenerate
-  `.github/workflows/actions.lock` after dependency changes.
+- Pin external Actions to full commit SHAs directly in each workflow.
 - Use signed commits and keep the branch focused on its linked work item.
 
 ## Validation
 
 Before opening or updating a pull request:
 
-1. run `gh actions-lock --no-fix` and require `valid: true`; use an explicit
-   dependency-update change to refresh the lockfile without replacing the
-   repository's required full-SHA workflow pins;
+1. validate edited workflows with Zizmor and preserve their full-SHA pins;
 2. confirm that all merge-queue checks also run on `merge_group` under the
    exact required context names;
 3. run only checks applicable to the current repository state;

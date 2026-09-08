@@ -14,3 +14,9 @@ All material changes to Astrologo Android are recorded here.
   Dependabot, Pages, and official Linear Release workflows.
 - Added a deliberately inert JavaScript probe for GitHub Code Quality.
 - Added repository ownership and organization sponsorship metadata.
+
+### Fixed
+
+- Removed the obsolete Actions dependency lock and its workflow onboarding
+  markers to restore workflow startup after Dependabot updates. Direct SHA
+  pins, workflow behavior and repository security settings are unchanged.
