@@ -53,9 +53,8 @@ Code Quality one supported-language target before application source exists.
 It is never loaded by Pages or any production runtime and does not represent
 Kotlin or Android coverage.
 
-Every external GitHub Action is pinned to a full commit SHA and inventoried in
-[`THIRDPARTY.md`](THIRDPARTY.md). The generated
-`.github/workflows/actions.lock` is the machine-verifiable dependency record.
+Every external GitHub Action is pinned to a full commit SHA directly in its
+workflow. The third-party inventory is in [`THIRDPARTY.md`](THIRDPARTY.md).
 
 ## Contributing, security, and license
 
