@@ -9,9 +9,11 @@ All material changes to Astrologo Android are recorded here.
 - Update the official CodeQL Action to v4.38.0 and Zizmor Action to v0.6.4,
   retaining full commit pins and aligning the current third-party inventory.
 
-- Adopted repository-local native Dependabot auto-merge, weekly Monday updates
-  in Sao Paulo, seven-day third-party cooldown and minor/patch groups with
+- Adopted repository-local native Dependabot auto-merge and daily updates at
+  05:00 in fixed UTC-03:00, including weekends, seven-day third-party cooldown
+  and minor/patch groups with
   standalone majors. Native checks and rules remain the admission boundary.
+- Group security updates separately from version updates.
 - Removed the obsolete advanced CodeQL workflow in favor of configured
   Default Setup, and retired merge-group consumers and central-controller
   instructions without adding an application CI or package manifest.
