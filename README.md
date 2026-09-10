@@ -43,13 +43,16 @@ bootstrap does not convert them in bulk.
 - Zizmor analyzes workflow security and uploads SARIF.
 - OpenSSF Scorecard observes the default branch and uploads SARIF without
   external result publication; it is not a pull-request gate.
-- Dependabot checks GitHub Actions weekly on Monday at 06:00 in
-  `America/Sao_Paulo`, with a seven-day cooldown except for `actions/*` and
+- Dependabot checks GitHub Actions every day, including weekends, at 05:00 in
+  fixed UTC-03:00, with a seven-day cooldown except for `actions/*` and
   `github/*`. Minor/patch updates are grouped; majors remain separate PRs.
   The repository-local official GitHub CLI workflow arms native exact-head
   auto-merge for all same-repository Dependabot PRs, subject to native checks
   and rules, without a central controller, merge queue, or manual bot review.
   Gradle coverage will be added only with a real Gradle project.
+  Security updates have their own group and do not wait for the version-update
+  schedule or cooldown. If one member fails, diagnose it and adjust native
+  grouping so other fixes can proceed through the required checks.
 - The official Linear Release Action and CLI v0.17.2 record `main` commit
   history in the dedicated continuous pipeline, using the existing
   `linear-release` environment and native `queue: max`. This records repository
