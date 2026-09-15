@@ -20,7 +20,7 @@ All material changes to Astrologo Android are recorded here.
 - Kept the native Pages artifact/deployment split and added PR-retarget event
   coverage to Pages and Dependency Review. Aligned Zizmor and Scorecard with
   the native fleet pattern; Scorecard retains SARIF without external publishing.
-- Aligned the official Linear CLI with Action v0.17.2 while preserving the
+- Aligned the official Linear CLI with Action v0.18.0 while preserving the
   main commit-history pipeline, dedicated environment and native pending queue.
 - Added the repository-local inbound rights policy and updated governance and
   third-party inventory descriptions without changing original legal texts,

@@ -16,7 +16,7 @@ Transitive Action dependencies remain defined by those pinned upstream actions.
 | `actions/configure-pages` | v6.0.0 | `45bfe0192ca1faeb007ade9deae92b16b8254a0d` | [MIT](https://github.com/actions/configure-pages/blob/45bfe0192ca1faeb007ade9deae92b16b8254a0d/LICENSE) | Configure the Pages build |
 | `actions/upload-pages-artifact` | v5.0.0 | `fc324d3547104276b827a68afc52ff2a11cc49c9` | [MIT](https://github.com/actions/upload-pages-artifact/blob/fc324d3547104276b827a68afc52ff2a11cc49c9/LICENSE) | Upload the sanitized `site/` artifact |
 | `actions/deploy-pages` | v5.0.1 | `368f82528645a54fb793d4d04e342629a3f51346` | [MIT](https://github.com/actions/deploy-pages/blob/368f82528645a54fb793d4d04e342629a3f51346/LICENSE) | Deploy the trusted Pages artifact |
-| `linear/linear-release-action` | v0.17.2 | `53ad0f863963e7f8e270fba18426bbb55ef55384` | [MIT](https://github.com/linear/linear-release-action/blob/53ad0f863963e7f8e270fba18426bbb55ef55384/LICENSE) | Create a release in the corresponding Linear pipeline |
+| `linear/linear-release-action` | v0.18.0 | `d4af10092984f9bc6d5efa075b242bdf01333463` | [MIT](https://github.com/linear/linear-release-action/blob/d4af10092984f9bc6d5efa075b242bdf01333463/LICENSE) | Create a release in the corresponding Linear pipeline |
 
 `github/codeql-action` is MIT-licensed. GitHub manages analysis through CodeQL
 Default Setup; the table's explicit Action pin is the SARIF-upload consumer.
@@ -36,7 +36,7 @@ results to an external Scorecard service.
 
 This is a maintained direct automation inventory, not a generated guarantee of
 all transitive dependencies or future Android bundle coverage. The official
-Linear Action selects CLI v0.17.2 explicitly. No custom license generator or
+Linear Action selects CLI v0.18.0 explicitly. No custom license generator or
 application dependency is introduced by the governance reform.
 
 ## Repository license
