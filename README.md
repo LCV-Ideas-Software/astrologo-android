@@ -53,7 +53,7 @@ bootstrap does not convert them in bulk.
   Security updates have their own group and do not wait for the version-update
   schedule or cooldown. If one member fails, diagnose it and adjust native
   grouping so other fixes can proceed through the required checks.
-- The official Linear Release Action and CLI v0.17.2 record `main` commit
+- The official Linear Release Action and CLI v0.18.0 record `main` commit
   history in the dedicated continuous pipeline, using the existing
   `linear-release` environment and native `queue: max`. This records repository
   history, not proof of an Android release or a Pages deployment; a sync
