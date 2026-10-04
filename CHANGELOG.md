@@ -6,12 +6,16 @@ All material changes to Astrologo Android are recorded here.
 
 ### Fixed
 
-- Bind a manually recorded Play Release to the exact source commit of the
-  successful `publish-play.yml` run identified by `publish_run_id` (ASTANDR-8).
-  Validate the native run and checkout, check the version at that commit,
-  reject existing tags, explicitly target the published SHA, and verify the
-  draft's tag before uploading assets or publishing. A later `main` commit
-  retaining the same versionCode no longer determines the tag.
+- Bind a manually recorded Play Release to the producer's exact native source
+  and successful Play commit step, including runs with later APK failures
+  (ASTANDR-8). Split durable publication from APK retrieval; validate source
+  package and version before authentication; require a repository-local narrow
+  `PLAY_RELEASE_TOKEN` for historical workflow-containing tag/Release writes.
+  Reject existing tags/Releases, create the tag atomically and the identified
+  draft through native APIs, verify the exact tag before publication, and clean
+  up only this attempt's freshly verified unpublished draft and unchanged tag.
+  Preserve verified producer APK attestation when available instead of creating
+  misleading build provenance from the recorder's different OIDC identity.
 
 ### Added
 

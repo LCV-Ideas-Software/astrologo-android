@@ -74,17 +74,29 @@ bootstrap does not convert them in bulk.
   store distributes — plus `SHA256SUMS` and a provenance attestation.
 - `record-play-release.yml`, also dispatched manually, records that GitHub
   Release for a version **already** on the store, given its `versionCode` and
-  the `publish_run_id` of the successful `publish-play.yml` run that uploaded it,
-  without rebuilding or re-uploading anything. It is the path after a first
-  publication is completed in the Console, when the publishing workflow has
-  already finished and re-dispatching it would only re-upload a `versionCode`
-  Play refuses. Measured on 20/09/2026 in calculadora-android: Play makes the
-  universal APK available as soon as it processes the bundle, before any rollout.
-  The native Actions API verifies that the run belongs to this repository and
-  publishing workflow and completed successfully. The workflow checks out that
-  run's exact `head_sha`, validates the version there, and creates the tag at
-  that SHA even if `main` has advanced. Existing tags are rejected; the new tag's
-  commit is verified before assets are uploaded and the draft is published.
+  the `publish_run_id` that uploaded it, without rebuilding or re-uploading.
+  The native Actions API verifies the repository, workflow, exact source SHA
+  and current-attempt successful Play upload/commit step. A later APK download
+  failure does not erase that durable commit; a failed legacy combined step
+  remains unproven and is rejected. The publisher records commit success before
+  its separate APK download step. The recorder checks out that exact SHA and
+  verifies its version and `applicationId` against `PLAY_PACKAGE_NAME` before
+  Google authentication, preserving that package for subsequent calls.
+  Existing tags and Releases are rejected. The native Git reference API creates
+  the exact tag atomically before the native Release API creates an identified
+  draft. Its tag is verified before assets are uploaded and publication occurs.
+  On failure, cleanup removes only this attempt's identified unpublished draft
+  and unchanged tag after fresh checks; published, foreign or uncertain state
+  is preserved. No existing tag is rewritten.
+  A repository-local `PLAY_RELEASE_TOKEN` with Contents and Workflows write
+  access is required for the historical tag/Release write and is checked before
+  Google authentication; other reads retain the native `GITHUB_TOKEN`.
+  Existing APK build attestation is verified against the publishing workflow
+  and exact producer SHA and retained when available. First-draft publication
+  or failed producer APK retrieval can have no such proof: the recorder states
+  this explicitly and never mints replacement build provenance under its own
+  OIDC identity. Run/commit-step, package, version and Play APK checksum evidence
+  remain separate from producer build provenance.
 
   This repository has no application yet, so `play/release-notes/pt-BR.txt` does
   not exist and the publishing workflow stops before building, saying so. That is
