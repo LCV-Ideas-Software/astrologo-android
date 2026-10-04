@@ -19,6 +19,10 @@ name: Record a Play release on GitHub
 on:
   workflow_dispatch:
     inputs:
+      publish_run_id:
+        description: ID do run bem-sucedido de publish-play.yml que enviou esta versão
+        required: true
+        type: string
       version_code:
         description: versionCode já publicado no Google Play
         required: true
@@ -26,19 +30,51 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: play-release
+  cancel-in-progress: false
+
 jobs:
   record:
     name: Fetch the Play-signed APK and record the Release
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
+      actions: read # Comprovar o run de publicação e seu commit de origem.
       contents: write # Criar a tag, a Release e anexar os assets.
       id-token: write # Token OIDC: credenciais do Google e assinatura Sigstore.
       attestations: write # Guardar a attestation neste repositório.
     steps:
-      - name: Check out repository
+      - name: Resolve the published source commit
+        id: published
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUBLISH_RUN_ID: ${{ inputs.publish_run_id }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$PUBLISH_RUN_ID" =~ ^[1-9][0-9]*$ ]]; then
+            echo "::error::publish_run_id deve ser o ID numérico do run de publicação."
+            exit 1
+          fi
+          run=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PUBLISH_RUN_ID")
+          if ! jq -e --arg repo "$GITHUB_REPOSITORY" '
+            .repository.full_name == $repo and
+            .head_repository.full_name == $repo and
+            (.path | split("@")[0]) == ".github/workflows/publish-play.yml" and
+            .event == "workflow_dispatch" and
+            .status == "completed" and .conclusion == "success" and
+            (.head_sha | test("^[0-9a-f]{40}$"))
+          ' <<< "$run" >/dev/null; then
+            echo "::error::O run deve ser uma publicação concluída com sucesso por publish-play.yml neste repositório."
+            exit 1
+          fi
+          echo "sha=$(jq -r '.head_sha' <<< "$run")" >> "$GITHUB_OUTPUT"
+          echo "url=$(jq -r '.html_url' <<< "$run")" >> "$GITHUB_OUTPUT"
+
+      - name: Check out the published source commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ steps.published.outputs.sha }}
           persist-credentials: false
 
       - name: Verify required configuration
@@ -60,13 +96,18 @@ jobs:
 
       - name: Derive the tag and check it against the sources
         id: version
-        # A tag vem do `versionName` do repositório, como no `publish-play.yml`.
-        # O `versionCode` do repositório tem de bater com o informado: gravar a
+        # A tag vem do `versionName` do commit publicado, não do disparo atual.
+        # O `versionCode` desse commit tem de bater com o informado: gravar a
         # Release de uma versão com o nome de outra seria pior que não gravar.
         env:
           VERSION_CODE: ${{ inputs.version_code }}
+          PUBLISHED_SHA: ${{ steps.published.outputs.sha }}
         run: |
           set -euo pipefail
+          if [ "$(git rev-parse HEAD)" != "$PUBLISHED_SHA" ]; then
+            echo "::error::O checkout não corresponde ao commit do run de publicação."
+            exit 1
+          fi
           name=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
           code=$(grep -oP 'versionCode = \K[0-9]+' app/build.gradle.kts)
           if ! [[ "$name" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -80,6 +121,19 @@ jobs:
           IFS=. read -r major minor patch <<< "$name"
           echo "name=$name" >> "$GITHUB_OUTPUT"
           echo "tag=$(printf 'v%02d.%02d.%02d' "$major" "$minor" "$patch")" >> "$GITHUB_OUTPUT"
+
+      - name: Reject an existing release tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          refs=$(gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/$TAG")
+          count=$(jq -er --arg ref "refs/tags/$TAG" 'map(select(.ref == $ref)) | length' <<< "$refs")
+          if [ "$count" != 0 ]; then
+            echo "::error::A tag $TAG já existe; nenhuma tag ou Release existente será regravada."
+            exit 1
+          fi
 
       - name: Authenticate to Google Cloud
         id: auth
@@ -164,6 +218,8 @@ jobs:
           VERSION_CODE: ${{ inputs.version_code }}
           CERT: ${{ steps.apk.outputs.certificate }}
           PACKAGE: ${{ vars.PLAY_PACKAGE_NAME }}
+          PUBLISHED_SHA: ${{ steps.published.outputs.sha }}
+          PUBLISH_RUN_URL: ${{ steps.published.outputs.url }}
         run: |
           set -euo pipefail
           {
@@ -178,16 +234,31 @@ jobs:
             echo "- pacote: \`$PACKAGE\`"
             echo "- versionName: \`$VERSION_NAME\` — versionCode: \`$VERSION_CODE\`"
             echo "- certificado de assinatura (SHA-256): \`$CERT\`"
+            echo "- commit publicado: \`$PUBLISHED_SHA\`"
+            echo "- run de publicação: $PUBLISH_RUN_URL"
             echo ""
             echo "Proveniência verificável com \`gh attestation verify\`."
           } > corpo.md
 
-          gh release create "$TAG" --draft --title "$VERSION_NAME" --notes-file corpo.md
-          gh release upload "$TAG" release/*.apk release/SHA256SUMS
-          gh release edit "$TAG" --draft=false
+          refs=$(gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/$TAG")
+          count=$(jq -er --arg ref "refs/tags/$TAG" 'map(select(.ref == $ref)) | length' <<< "$refs")
+          if [ "$count" != 0 ]; then
+            echo "::error::A tag $TAG apareceu durante o registro; a Release não será criada."
+            exit 1
+          fi
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$PUBLISHED_SHA" \
+            --draft --title "$VERSION_NAME" --notes-file corpo.md
+          tag_sha=$(gh api "repos/$GITHUB_REPOSITORY/commits/tags/$TAG" --jq '.sha')
+          if [ "$tag_sha" != "$PUBLISHED_SHA" ]; then
+            echo "::error::A tag $TAG não aponta ao commit publicado $PUBLISHED_SHA; o rascunho não será publicado."
+            exit 1
+          fi
+          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" release/*.apk release/SHA256SUMS
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false
           {
             echo "### Release \`$TAG\` gravada"
             echo ""
             echo "- APK universal assinado pela Play, certificado \`$CERT\`"
             echo "- \`SHA256SUMS\` e attestation de proveniência"
+            echo "- commit publicado: \`$PUBLISHED_SHA\` — $PUBLISH_RUN_URL"
           } >> "$GITHUB_STEP_SUMMARY"
