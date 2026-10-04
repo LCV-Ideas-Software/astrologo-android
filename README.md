@@ -76,8 +76,8 @@ bootstrap does not convert them in bulk.
   Release for a version **already** on the store, given its `versionCode` and
   the `publish_run_id` that uploaded it, without rebuilding or re-uploading.
   The native Actions API verifies the repository, workflow, exact source SHA
-  and current-attempt successful Play upload/commit step. A later APK download
-  failure does not erase that durable commit; a failed legacy combined step
+  and a successful Play upload/commit step across all native attempts of that run. A later APK download
+  failure or failed rerun does not erase that durable commit; a failed legacy combined step
   remains unproven and is rejected. The publisher records commit success before
   its separate APK download step. The recorder checks out that exact SHA and
   verifies its version and `applicationId` against `PLAY_PACKAGE_NAME` before
