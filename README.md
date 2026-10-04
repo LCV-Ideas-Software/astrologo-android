@@ -73,12 +73,18 @@ bootstrap does not convert them in bulk.
   Google Play generated and signed with the app signing key — the same binary the
   store distributes — plus `SHA256SUMS` and a provenance attestation.
 - `record-play-release.yml`, also dispatched manually, records that GitHub
-  Release for a version **already** on the store, given its `versionCode`,
+  Release for a version **already** on the store, given its `versionCode` and
+  the `publish_run_id` of the successful `publish-play.yml` run that uploaded it,
   without rebuilding or re-uploading anything. It is the path after a first
   publication is completed in the Console, when the publishing workflow has
   already finished and re-dispatching it would only re-upload a `versionCode`
   Play refuses. Measured on 20/09/2026 in calculadora-android: Play makes the
   universal APK available as soon as it processes the bundle, before any rollout.
+  The native Actions API verifies that the run belongs to this repository and
+  publishing workflow and completed successfully. The workflow checks out that
+  run's exact `head_sha`, validates the version there, and creates the tag at
+  that SHA even if `main` has advanced. Existing tags are rejected; the new tag's
+  commit is verified before assets are uploaded and the draft is published.
 
   This repository has no application yet, so `play/release-notes/pt-BR.txt` does
   not exist and the publishing workflow stops before building, saying so. That is

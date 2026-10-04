@@ -4,12 +4,21 @@ All material changes to Astrologo Android are recorded here.
 
 ## [Unreleased]
 
+### Fixed
+
+- Bind a manually recorded Play Release to the exact source commit of the
+  successful `publish-play.yml` run identified by `publish_run_id` (ASTANDR-8).
+  Validate the native run and checkout, check the version at that commit,
+  reject existing tags, explicitly target the published SHA, and verify the
+  draft's tag before uploading assets or publishing. A later `main` commit
+  retaining the same versionCode no longer determines the tag.
+
 ### Added
 
 - Bring the Google Play publication pipeline to the fleet baseline, PANDROI-40,
   by copying it verbatim from calculadora-android, where it was exercised end to
-  end on a real publication on 20/09/2026. Both workflow files are byte-identical
-  to that repository's, because an implementation already reviewed, merged and
+  end on a real publication on 20/09/2026. Both workflow files initially matched
+  that repository's byte for byte, because an implementation reviewed, merged and
   proven in production is worth more than a re-derivation of it.
 
   `publish-play.yml` gains four things it lacked. Release notes now travel with
