@@ -71,12 +71,25 @@ bootstrap does not convert them in bulk.
   publication is finished in the Play Console. A production publication also
   records a GitHub Release with tag `vXX.XX.XX`, carrying the universal APK that
   Google Play generated and signed with the app signing key — the same binary the
-  store distributes — plus `SHA256SUMS` and a provenance attestation. Production
+  Play uses — plus `SHA256SUMS` and a provenance attestation. Both entrypoints
+  require the read-only production releases API to report `PUBLISHED` with the
+  exact source versionCode in `activeArtifacts` before downloading/recording.
+  A completed edit alone is not publication: the producer records no GitHub
+  Release while Google review/manual publication remains pending, preserving
+  its committed version for later recording. The native `PUBLISHED` lifecycle
+  also includes halted/resumable releases; Google controls current rollout and
+  availability, which these notes do not independently guarantee. Production
   recording requires `PLAY_RELEASE_TOKEN` before Google authentication, rejects
   existing tags/drafts before upload, and atomically creates the tag at this
   publishing run's exact source SHA. Native tag readbacks precede asset upload
   and publication. Both Play entrypoints share this repository's `play-release`
-  concurrency group. A failed recording preserves its draft/tag and reports
+  concurrency group with native `queue: max`: up to 100 pending operations are
+  retained; additional runs are canceled when the queue is full. This does not
+  serialize maintainer API operations. Asset uploads use the validated native
+  upload URL returned for this exact draft ID, and final publication patches
+  that same ID. A deleted/replaced or retagged draft fails identity checks;
+  writes never re-resolve a replacement draft by tag. A failed recording
+  preserves its draft/tag and reports
   their identity for operator review before retry; recovery must never re-upload
   an already committed versionCode.
 - `record-play-release.yml`, also dispatched manually, records that GitHub
@@ -86,7 +99,11 @@ bootstrap does not convert them in bulk.
   and a successful Play upload/commit step across all native attempts of that run. A later APK download
   failure or failed rerun does not erase that durable commit; a failed legacy combined step
   remains unproven and is rejected. The publisher records commit success before
-  its separate APK download step. The recorder checks out that exact SHA and
+  its separate APK download step. A distinct native step confirms completed-
+  production intent; it never substitutes for the Google lifecycle read. A
+  successful legacy upload or first draft later promoted in the Console can
+  qualify through the verified producer source and current production
+  `PUBLISHED`/active-version proof. The recorder checks out that exact SHA and
   verifies its version and `applicationId` against `PLAY_PACKAGE_NAME` before
   Google authentication, preserving that package for subsequent calls.
   Existing tags and Releases are rejected. The native Git reference API creates
@@ -98,7 +115,9 @@ bootstrap does not convert them in bulk.
   deleted. No existing tag is rewritten.
   A repository-local `PLAY_RELEASE_TOKEN` with Contents and Workflows write
   access is required for the historical tag/Release write and is checked before
-  Google authentication; other reads retain the native `GITHUB_TOKEN`.
+  Google authentication. Collision guards also use the push-capable dedicated
+  token because the native Release list exposes drafts only to users with push
+  access. Actions/checkout/attestation reads retain the native `GITHUB_TOKEN`.
   Existing APK build attestation is verified against the publishing workflow
   and exact producer SHA and retained when available. First-draft publication
   or failed producer APK retrieval can have no such proof: the recorder states

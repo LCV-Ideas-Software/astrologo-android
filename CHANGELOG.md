@@ -6,6 +6,20 @@ All material changes to Astrologo Android are recorded here.
 
 ### Fixed
 
+- Bind every asset upload and final publication to the native draft ID and
+  returned upload URL, with exact ID/tag/source/draft readbacks. Never re-resolve
+  a replacement draft by tag. Use native `queue: max` in both Play entrypoints
+  to retain up to 100 pending operations without canceling a pending predecessor.
+
+- Require native production `PUBLISHED` lifecycle and the exact active artifact
+  version before either workflow records a public Release. Completed edits or
+  generated APKs alone are insufficient; pending Google publication records no
+  GitHub Release and remains recoverable without re-upload. Preserve the first
+  draft/Console promotion path through current published production proof and
+  the exact verified producer source. Use the push-capable token for draft
+  collision visibility; retain a distinct native completed-production marker
+  as producer intent, never as proof of user availability.
+
 - Apply the same exact-source native tag/draft guards to the publishing
   workflow: refuse existing production tags before upload, require the
   dedicated Release token before Google authentication, serialize both Play
