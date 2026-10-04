@@ -71,7 +71,14 @@ bootstrap does not convert them in bulk.
   publication is finished in the Play Console. A production publication also
   records a GitHub Release with tag `vXX.XX.XX`, carrying the universal APK that
   Google Play generated and signed with the app signing key — the same binary the
-  store distributes — plus `SHA256SUMS` and a provenance attestation.
+  store distributes — plus `SHA256SUMS` and a provenance attestation. Production
+  recording requires `PLAY_RELEASE_TOKEN` before Google authentication, rejects
+  existing tags/drafts before upload, and atomically creates the tag at this
+  publishing run's exact source SHA. Native tag readbacks precede asset upload
+  and publication. Both Play entrypoints share this repository's `play-release`
+  concurrency group. A failed recording preserves its draft/tag and reports
+  their identity for operator review before retry; recovery must never re-upload
+  an already committed versionCode.
 - `record-play-release.yml`, also dispatched manually, records that GitHub
   Release for a version **already** on the store, given its `versionCode` and
   the `publish_run_id` that uploaded it, without rebuilding or re-uploading.
@@ -85,9 +92,10 @@ bootstrap does not convert them in bulk.
   Existing tags and Releases are rejected. The native Git reference API creates
   the exact tag atomically before the native Release API creates an identified
   draft. Its tag is verified before assets are uploaded and publication occurs.
-  On failure, cleanup removes only this attempt's identified unpublished draft
-  and unchanged tag after fresh checks; published, foreign or uncertain state
-  is preserved. No existing tag is rewritten.
+  On failure, the created tag and draft ID are reported and preserved for
+  operator review before retry. GitHub has no conditional deletion API that can
+  exclude a concurrent maintainer publication or tag update; no Release/ref is
+  deleted. No existing tag is rewritten.
   A repository-local `PLAY_RELEASE_TOKEN` with Contents and Workflows write
   access is required for the historical tag/Release write and is checked before
   Google authentication; other reads retain the native `GITHUB_TOKEN`.

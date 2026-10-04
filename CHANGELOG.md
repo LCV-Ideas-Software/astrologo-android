@@ -6,14 +6,22 @@ All material changes to Astrologo Android are recorded here.
 
 ### Fixed
 
+- Apply the same exact-source native tag/draft guards to the publishing
+  workflow: refuse existing production tags before upload, require the
+  dedicated Release token before Google authentication, serialize both Play
+  entrypoints locally, and verify the created source tag before assets and
+  publication. Preserve prior releases and any state created by a failed
+  attempt, reporting its tag/draft ID for operator review without deleting it.
+
 - Bind a manually recorded Play Release to the producer's exact native source
   and successful Play commit step, including runs with later APK failures
   (ASTANDR-8). Split durable publication from APK retrieval; validate source
-  package and version before authentication; require a repository-local narrow
+  package and version before authentication; require a repository-local
   `PLAY_RELEASE_TOKEN` for historical workflow-containing tag/Release writes.
   Reject existing tags/Releases, create the tag atomically and the identified
-  draft through native APIs, verify the exact tag before publication, and clean
-  up only this attempt's freshly verified unpublished draft and unchanged tag.
+  draft through native APIs, verify the exact tag before publication, and
+  preserve failed-attempt tag/draft state for operator review before retry.
+  Never delete a Release/ref through a non-atomic check/delete.
   Preserve verified producer APK attestation when available instead of creating
   misleading build provenance from the recorder's different OIDC identity.
 
