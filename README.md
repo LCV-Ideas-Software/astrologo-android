@@ -88,7 +88,9 @@ bootstrap does not convert them in bulk.
   serialize maintainer API operations. Asset uploads use the validated native
   upload URL returned for this exact draft ID, and final publication patches
   that same ID. A deleted/replaced or retagged draft fails identity checks;
-  writes never re-resolve a replacement draft by tag. A failed recording
+  writes never re-resolve a replacement draft by tag. The same-ID publication
+  PATCH explicitly supplies the tag and full source target and validates both
+  in its response; omitted fields are not assumed stable. A failed recording
   preserves its draft/tag and reports
   their identity for operator review before retry; recovery must never re-upload
   an already committed versionCode.
