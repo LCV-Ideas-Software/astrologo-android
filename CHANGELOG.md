@@ -6,6 +6,10 @@ All material changes to Astrologo Android are recorded here.
 
 ### Fixed
 
+- Explicitly retain the tag and full source target on the same-ID publication
+  PATCH, validating both in its native response instead of assuming omitted
+  Release fields remain stable.
+
 - Bind every asset upload and final publication to the native draft ID and
   returned upload URL, with exact ID/tag/source/draft readbacks. Never re-resolve
   a replacement draft by tag. Use native `queue: max` in both Play entrypoints
