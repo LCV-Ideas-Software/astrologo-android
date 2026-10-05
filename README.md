@@ -4,9 +4,10 @@
 
 Public delivery repository for the Android edition of **Astrologo**, maintained
 by LCV Ideas & Software. The repository is currently an operational,
-governance, and supply-chain baseline; it does not contain a functional
-Android application, Gradle project, signing configuration, production
-dependency, or published app release yet.
+governance, and supply-chain baseline, with the initial Gradle project and the
+Play publishing pipeline (ASTANDR-7): one `:app` module with a manifest and no
+application code. It does not contain a functional Android application,
+signing configuration, production dependency, or published app release yet.
 
 ## Canonical tracking
 
@@ -31,8 +32,9 @@ bootstrap does not convert them in bulk.
 - AI access, account handling, billing, deletion, and Play distribution remain
   gated work. This repository baseline does not claim that any of them is
   implemented or approved.
-- The package name reserved for the future scaffold is `dev.lcv.astrologo`;
-  its presence here is documentation, not evidence of an Android build.
+- The package name is `dev.lcv.astrologo`, the `namespace` and
+  `applicationId` of the initial `:app` module, which has no application code
+  yet.
 
 ## Current automation baseline
 
@@ -49,7 +51,8 @@ bootstrap does not convert them in bulk.
   The repository-local official GitHub CLI workflow arms native exact-head
   auto-merge for all same-repository Dependabot PRs, subject to native checks
   and rules, without a central controller, merge queue, or manual bot review.
-  Gradle coverage will be added only with a real Gradle project.
+  It also checks the Gradle project, with the same daily schedule, cooldown
+  and minor/patch grouping.
   Security updates have their own group and do not wait for the version-update
   schedule or cooldown. If one member fails, diagnose it and adjust native
   grouping so other fixes can proceed through the required checks.
@@ -140,8 +143,8 @@ Kotlin or Android coverage.
 Every external GitHub Action is pinned to a full commit SHA directly in its
 workflow. The third-party inventory is in [`THIRDPARTY.md`](THIRDPARTY.md).
 
-This scaffold has no application CI/build or npm/Gradle dependencies. Its
-applicable PR checks are `Build Pages artifact`, `Dependency Review`, and
+This scaffold has no application CI/build and no npm dependency; its Gradle
+project declares only the Android Gradle Plugin. Its applicable PR checks are `Build Pages artifact`, `Dependency Review`, and
 `Run zizmor`, alongside the effective native security rules. A repository-local
 required-check ruleset must be separately approved and verified before the
 new auto-merge workflow is admitted; no remote setting is implied by these

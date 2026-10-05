@@ -49,9 +49,9 @@ Before opening or updating a pull request:
 3. run only checks applicable to the current repository state;
 4. record exact SHA-based evidence in the pull request and tracking issue.
 
-Do not create fake Gradle files or run Android build gates before a real
-application scaffold exists. Do not add npm dependencies or custom validators
-only to create a CI job for this documentation-only scaffold. Preserve the
+The real application scaffold exists since ASTANDR-7: the Gradle project, with
+one `:app` module and no application code yet. Do not add npm dependencies or
+custom validators only to create a CI job for it. Preserve the
 inert Code Quality probe and the complete legal texts. Do not run `cargo` or
 `rustc` locally, use Codespaces, or change commit-signing configuration.
 
