@@ -4,12 +4,14 @@ plugins {
 
 android {
     namespace = "dev.lcv.astrologo"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "dev.lcv.astrologo"
-        minSdk = 24
-        targetSdk = 36
+        // Android 16: nenhum aplicativo *-android abaixo dele (decisão do
+        // operador, 04/10/2026).
+        minSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "0.1.0"
     }
