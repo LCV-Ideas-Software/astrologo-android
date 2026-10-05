@@ -4,6 +4,17 @@ All material changes to Astrologo Android are recorded here.
 
 ## [Unreleased]
 
+### Changed
+
+- The minimum Android version is now Android 16 (`minSdk` 36); it was
+  Android 7.0 (`minSdk` 24) (ASTANDR-9). On 04/10/2026 the operator decided
+  that no `*-android` app supports anything below it. The project has no
+  application code yet, so nothing else changes.
+- `compileSdk` and `targetSdk` are now 37, as in the other `*-android` apps,
+  which clears lint's `OldTargetApi` and `GradleDependency` warnings. The
+  manifest tells lint the missing application icon is expected: the project
+  has no code or icon yet.
+
 ### Fixed
 
 - Explicitly retain the tag and full source target on the same-ID publication
