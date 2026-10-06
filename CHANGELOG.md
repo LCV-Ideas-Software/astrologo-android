@@ -6,6 +6,10 @@ All material changes to Astrologo Android are recorded here.
 
 ### Changed
 
+- Update the official Linear Release Action to v0.18.1 at its full commit SHA,
+  select the official CLI v0.18.0 explicitly and retain upstream checksum
+  verification (LCV-316).
+
 - The minimum Android version is now Android 16 (`minSdk` 36); it was
   Android 7.0 (`minSdk` 24) (ASTANDR-9). On 04/10/2026 the operator decided
   that no `*-android` app supports anything below it. The project has no
